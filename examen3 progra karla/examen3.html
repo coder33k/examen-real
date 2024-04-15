@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adivina el número</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Adivina el número</h1>
+    <p>Adivina el número secreto entre 1 y 100. Tienes 10 intentos.</p>
+    <input type="number" id="guessInput" placeholder="Tu conjetura">
+    <button onclick="handleGuess()">Adivinar</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    class Game {
+      constructor() {
+        this.secretNumber = Math.floor(Math.random() * 100) + 1;
+        this.remainingGuesses = 10;
+      }
+
+      guess(number) {
+        if (this.remainingGuesses === 0) {
+          return "¡El juego ha terminado!";
+        }
+
+        this.remainingGuesses--;
+
+        if (number === this.secretNumber) {
+          return "¡Felicidades! ¡Lo has adivinado!";
+        } else if (number < this.secretNumber) {
+          return "¡El número secreto es mayor!";
+        } else {
+          return "¡El número secreto es menor!";
+        }
+      }
+
+      getRemainingGuesses() {
+        return this.remainingGuesses;
+      }
+
+      reset() {
+        this.secretNumber = Math.floor(Math.random() * 100) + 1;
+        this.remainingGuesses = 10;
+        return "¡Nuevo juego iniciado! Adivina el número entre 1 y 100.";
+      }
+    }
+
+    const game = new Game();
+
+    function handleGuess() {
+      const guessInput = document.getElementById("guessInput");
+      const guess = parseInt(guessInput.value);
+
+      if (isNaN(guess) || guess < 1 || guess > 100) {
+        document.getElementById("result").textContent = "Por favor, introduce un número válido entre 1 y 100.";
+        return;
+      }
+
+      const result = game.guess(guess);
+      document.getElementById("result").textContent = result;
+
+      if (game.getRemainingGuesses() === 0 || result.includes("¡Felicidades")) {
+        document.getElementById("result").textContent += " El número secreto era: " + game.secretNumber;
+        const playAgain = confirm("¿Quieres jugar de nuevo?");
+        if (playAgain) {
+          document.getElementById("result").textContent = game.reset();
+        } else {
+          document.getElementById("result").textContent = "¡Gracias por jugar!";
+        }
+      } else {
+        document.getElementById("result").textContent += " Conjeturas restantes: " + game.getRemainingGuesses();
+      }
+    }
+  </script>
+</body>
+</html>
